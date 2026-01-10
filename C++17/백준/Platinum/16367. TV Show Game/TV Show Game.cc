@@ -70,12 +70,8 @@ int main() {
     }
     memset(vis, 0, sizeof(vis));
     for (auto &vec : S) {
-        bool flag=0;
         for (auto i : vec) {
-            if ((i<=N && vis[i+N]) || (i>N && vis[i-N])) flag=1;
-        }
-        if (flag) continue;
-        for (auto i : vec) {
+            if ((i<=N && vis[i+N]) || (i>N && vis[i-N])) continue;
             vis[i]=1;
         }
     }
