@@ -10,11 +10,8 @@ int main() {
     int n, m;
     cin >> n >> m;
     if (n>=m) {cout << m; return 0;}
-    bool tmp=0;
-    while (n<m) {
-        m -= n;
-        tmp=!tmp;
-    }
-    if (!tmp) cout << m;
-    else cout << n-m;
+    int tmp = m/n;
+    m%=n;
+    if (tmp&1) cout << n-m;
+    else cout << m;
 }
