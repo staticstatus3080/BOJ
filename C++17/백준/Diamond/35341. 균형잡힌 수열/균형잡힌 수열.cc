@@ -96,24 +96,21 @@ long long update_sequence(int p, int v) {
         int dist = (t+1)/2;
         if (lchk(p, dist)) {
             if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
+                
                 if (chk[siz+1][p]==0) {
                     ans++;
-                    chk[siz+1][p] = V[p];
-                    mpropagate(p, siz+1);
-                    rpropagate(p+dist, siz+1);
-                    lpropagate(p-dist, siz+1);
-                    flag=1;
                 }
+                chk[siz+1][p] = V[p];
+                rpropagate(p+dist, siz+1);
+                lpropagate(p-dist, siz+1);
             }
             else {
-                if (chk[siz+1][p]!=0) {
-                    ans--;
+                while (chk[siz+1][p]>0) {
                     chk[siz+1][p]=0;
-                    mpropagate(p, siz+1);
-                    rpropagate(p+dist, siz+1);
-                    lpropagate(p-dist, siz+1);
-                    flag=1;
+                    ans--;
+                    siz++;
                 }
+                flag=1;
             }
         }
         else break;
@@ -122,14 +119,3 @@ long long update_sequence(int p, int v) {
     }
     return ans;
 }
-
-/*
-어떤 단위 모양이 바뀔 경우 이를 전파 : log^2n에 처리
-(양옆 전파 + 가운데 전파)
-다만, 작은건 안바뀌어도 큰것만 바뀌는 경우가
-일단 원래 위치의 최대 산맥 크기를 k로 두기
-
-가장 작은 산맥의 크기는 3이므로 한 칸이 바뀌면 (답이 바뀐다고 가정하면) 
-그 칸의 최대산맥이 바뀌거나 양옆의 최소산맥이 바뀔거임
-전파 횟수는 최대 3번
-*/
