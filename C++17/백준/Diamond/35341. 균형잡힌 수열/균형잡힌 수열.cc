@@ -57,6 +57,8 @@ void rp(int p, int siz, int cnt) {
         }
         rp(p, siz+1, cnt+1);
     }
+    if (cnt==0) return;
+    rp(p+dist, siz, 0);
 }
 
 void lp(int p, int siz, int cnt) {
@@ -68,20 +70,22 @@ void lp(int p, int siz, int cnt) {
             if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p];}
             else if (cnt==0)return;
             else {
-                rp(p-dist, siz, 0);
+                lp(p-dist, siz, 0);
             }
         }
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0;}
             else if (cnt==0) return;
             else {
-                rp(p-dist, siz, 0);
+                lp(p-dist, siz, 0);
             }
         }
-        rp(p, siz+1, cnt+1);
+        lp(p, siz+1, cnt+1);
     }
+    if (cnt==0) return;
+    lp(p-dist, siz, 0);
 }
-void mpropagate(int p, int siz, int dir) {
+void mpropagate(int p, int siz) {
     int t = pow(2, siz+1)-1;
     int dist = (t+1)/2;
     bool flag=0;
@@ -97,20 +101,15 @@ void mpropagate(int p, int siz, int dir) {
             chk[siz+1][p]=0;
         }
         if (flag) {
-            if (dir==0) {
-                lp(p-dist, siz, 0);
-                rp(p+dist, siz, 0);
-            }
-            else if (dir==1) {
-                rp(p+dist, siz, 0);
-            }
-            else {
-                lp(p-dist, siz, 0);
-            }
+            lp(p-dist, siz, 0);
+            rp(p+dist, siz, 0);
             return;
         }
-        mpropagate(p, siz+1, dir);
+        mpropagate(p, siz+1);
+        return;
     }
+    lp(p-dist, siz, 0);
+    rp(p+dist, siz, 0);
 }
 //chk[a][b] : 크기가 a, 중앙이 b인 산맥의 값(산맥 안되면 0)
 long long update_sequence(int p, int v) {
@@ -121,8 +120,6 @@ long long update_sequence(int p, int v) {
     양옆에 최소산맥부터 propagate
     아마도 중앙 propagate에서 전이되는건 따로해야할듯
     */
-    mpropagate(p+1, 0, 0);
-    mpropagate(p-1, 0, 0);
     int siz=0;
     /*
     중앙에서 mpropagate하다가 결과가 바뀌면 거기서 mp, lp, rp하고 끝
@@ -150,10 +147,12 @@ long long update_sequence(int p, int v) {
         }
         else break;
         if (flag) {
-            mpropagate(p, siz, 0);
+            mpropagate(p, siz+1);
             break;
         }
         siz++;
     }
+    mpropagate(p+1, 0);
+    mpropagate(p-1, 0);
     return ans;
 }
