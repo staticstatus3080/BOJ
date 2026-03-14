@@ -88,8 +88,6 @@ void mpropagate(int p, int siz) {
             return;
         }
         pq.push({-siz-1, p, 0, 0});
-        pq.push({-siz-1, p-2*dist, -1, 0});
-        pq.push({-siz, p+2*dist, 1, 0});
         return;
     }
     pq.push({-siz, p-dist, -1, 0});
