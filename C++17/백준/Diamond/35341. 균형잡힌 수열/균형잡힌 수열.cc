@@ -5,7 +5,7 @@ using std::vector;
 int chk[21][100005]={}, ans;
 // -크기, 위치, 함수명, (필요시) cnt
 // -1:lp, 0:mp, 1:rp
-priority_queue<tuple<int,int,int,int>> pq;
+queue<tuple<int,int,int,int>> pq;
 vector<int> V;
 long long initialize(int N, vector<int> A) {
     for (int i=0; i<N; i++) V.push_back(A[i]);
@@ -136,9 +136,9 @@ long long update_sequence(int p, int v) {
             break;
         }
         if (flag) {
-            pq.push({-(siz+1), p, 0, 0});
             pq.push({-siz, p-dist, -1, 0});
             pq.push({-siz, p+dist, 1, 0});
+            pq.push({-(siz+1), p, 0, 0});
             break;
         }
         siz++;
@@ -146,7 +146,7 @@ long long update_sequence(int p, int v) {
     // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
     int a, b, c, d;
     while (!pq.empty()) {
-        auto [a, b, c, d] = pq.top();
+        auto [a, b, c, d] = pq.front();
         pq.pop();
         a *= -1;
         if (c==0) mpropagate(b, a);
