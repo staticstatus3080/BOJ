@@ -41,26 +41,12 @@ void rp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p];}
-            else if (cnt>0){
-                rp(p+dist, siz, 0);
-            }
-            else {
-                rp(p, siz+1, cnt);
-                return;
-            }
+            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p]; cnt++;}
         }
         else {
-            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0;}
-            else if (cnt>0){
-                rp(p+dist, siz, 0);
-            }
-            else {
-                rp(p, siz+1, cnt);
-                return;
-            }
+            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
         }
-        rp(p, siz+1, cnt+1);
+        rp(p, siz+1, cnt);
     }
     if (cnt==0) return;
     rp(p+dist, siz, 0);
@@ -72,26 +58,12 @@ void lp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p];}
-            else if (cnt>0){
-                lp(p-dist, siz, 0);
-            }
-            else {
-                lp(p, siz+1, cnt);
-                return;
-            }
+            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p]; cnt++;}
         }
         else {
-            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0;}
-            else if(cnt>0){
-                lp(p-dist, siz, 0);
-            }
-            else {
-                lp(p, siz+1, cnt);
-                return;
-            }
+            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
         }
-        lp(p, siz+1, cnt+1);
+        lp(p, siz+1, cnt);
     }
     if (cnt==0) return;
     lp(p-dist, siz, 0);
