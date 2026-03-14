@@ -5,7 +5,7 @@ using std::vector;
 int chk[21][100005]={}, ans;
 // -크기, 위치, 함수명, (필요시) cnt
 // -1:lp, 0:mp, 1:rp
-priority_queue<tuple<int,int,int,int>> pq;
+deque<tuple<int,int,int,int>> pq;
 vector<int> V;
 long long initialize(int N, vector<int> A) {
     for (int i=0; i<N; i++) V.push_back(A[i]);
@@ -41,12 +41,12 @@ void rp(int p, int siz, int cnt) {
             chk[siz+1][p] = V[p];
         }
         else {
-            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
+            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++; flag=1;}
         }
-        pq.push({-siz-1, p, 1, cnt});
+        pq.push_back({-siz-1, p, 1, cnt});
     }
     if (cnt==0) return;
-    if (!flag) pq.push({-siz, p+dist, 1, 0});
+    if (!flag) pq.push_front({-siz, p+dist, 1, 0});
 }
 
 void lp(int p, int siz, int cnt) {
@@ -59,13 +59,14 @@ void lp(int p, int siz, int cnt) {
             chk[siz+1][p] = V[p];
         }
         else {
-            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
+            if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++; flag=1;}
         }
-        pq.push({-siz-1, p, -1, cnt});
+        pq.push_back({-siz-1, p, -1, cnt});
     }
     if (cnt==0) return;
-    if (!flag) pq.push({-siz, p-dist, -1, 0});
+    if (!flag) pq.push_front({-siz, p-dist, -1, 0});
 }
+
 void mpropagate(int p, int siz) {
     int t = pow(2, siz+1)-1;
     int dist = (t+1)/2;
@@ -83,17 +84,18 @@ void mpropagate(int p, int siz) {
         }
         // 중앙 결과가 달라지다가 같아짐
         if (flag) {
-            pq.push({-siz, p-dist, -1, 0});
-            pq.push({-siz, p+dist, 1, 0});
+            pq.push_front({-siz, p-dist, -1, 0});
+            pq.push_front({-siz, p+dist, 1, 0});
             return;
         }
-        pq.push({-siz-1, p, 0, 0});
+        pq.push_back({-(siz+1), p, 0, 0});
         return;
     }
     else {
-        pq.push({-siz, p-dist, -1, 0});
-        pq.push({-siz, p+dist, 1, 0});
+        pq.push_front({-siz, p-dist, -1, 0});
+        pq.push_front({-siz, p+dist, 1, 0});
     }
+    
 }
 //chk[a][b] : 크기가 a, 중앙이 b인 산맥의 값(산맥 안되면 0)
 /*
@@ -126,21 +128,21 @@ long long update_sequence(int p, int v) {
                     flag=1;
                 }
                 else {
-                    pq.push({-siz, p-dist, -1, 0});
-                    pq.push({-siz, p+dist, 1, 0});
+                    pq.push_front({-siz, p-dist, -1, 0});
+                    pq.push_front({-siz, p+dist, 1, 0});
                     break;
                 }
             }
         }
         else {
-            pq.push({-siz, p-dist, -1, 0});
-            pq.push({-siz, p+dist, 1, 0});
+            pq.push_front({-siz, p-dist, -1, 0});
+            pq.push_front({-siz, p+dist, 1, 0});
             break;
         }
         if (flag) {
-            pq.push({-(siz+1), p, 0, 0});
-            pq.push({-siz, p-dist, -1, 0});
-            pq.push({-siz, p+dist, 1, 0});
+            pq.push_back({-(siz+1), p, 0, 0});
+            pq.push_front({-siz, p-dist, -1, 0});
+            pq.push_front({-siz, p+dist, 1, 0});
             break;
         }
         siz++;
@@ -148,8 +150,8 @@ long long update_sequence(int p, int v) {
     // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
     int a, b, c, d;
     while (!pq.empty()) {
-        auto [a, b, c, d] = pq.top();
-        pq.pop();
+        auto [a, b, c, d] = pq.front();
+        pq.pop_front();
         a *= -1;
         if (c==0) mpropagate(b, a);
         if (c==-1) lp(b, a, d);
