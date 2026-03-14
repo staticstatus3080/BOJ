@@ -146,8 +146,6 @@ long long update_sequence(int p, int v) {
         siz++;
     }
     // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
-    pq.push({0, p+1, 0, 0});
-    pq.push({0, p-1, 0, 0});
     int a, b, c, d;
     while (!pq.empty()) {
         auto [a, b, c, d] = pq.top();
