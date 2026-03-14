@@ -105,23 +105,24 @@ void mpropagate(int p, int siz) {
             return;
         }
         mpropagate(p, siz+1);
+        lp(p-2*dist, siz+1, 0);
+        rp(p+2*dist, siz+1, 0);
         return;
     }
     lp(p-dist, siz, 0);
     rp(p+dist, siz, 0);
 }
+//chk[a][b] : 크기가 a, 중앙이 b인 산맥의 값(산맥 안되면 0)
+/*
+양옆전파도 가변적으로 진행
+중앙 산맥이 변할때와 안변할때로 나누기
+안변하면:일치하는 마지막 빙산에서 rp lp
+*/
 long long update_sequence(int p, int v) {
     V[p]=v;
     chk[0][p]=v;
     int n = V.size();
-    /*
-    양옆에 최소산맥부터 propagate
-    아마도 중앙 propagate에서 전이되는건 따로해야할듯
-    */
     int siz=0;
-    /*
-    중앙에서 mpropagate하다가 결과가 바뀌면 거기서 mp, lp, rp하고 끝
-    */
     bool flag=0;
     while (1) {
         int t = pow(2, siz+1)-1;
@@ -159,6 +160,8 @@ long long update_sequence(int p, int v) {
         }
         siz++;
     }
+    // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
+    
     mpropagate(p+1, 0);
     mpropagate(p-1, 0);
     return ans;
