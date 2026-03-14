@@ -41,7 +41,8 @@ void rp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p]; cnt++;}
+            if (chk[siz+1][p]==0) {ans++; cnt++;}
+            chk[siz+1][p] = V[p];
         }
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
@@ -58,7 +59,8 @@ void lp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; chk[siz+1][p] = V[p]; cnt++;}
+            if (chk[siz+1][p]==0) {ans++; cnt++;}
+            chk[siz+1][p] = V[p];
         }
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++;}
@@ -83,6 +85,7 @@ void mpropagate(int p, int siz) {
             else flag=1;
             chk[siz+1][p]=0;
         }
+        // 중앙 결과가 달라지다가 같아짐
         if (flag) {
             lp(p-dist, siz, 0);
             rp(p+dist, siz, 0);
@@ -113,7 +116,6 @@ long long update_sequence(int p, int v) {
         int dist = (t+1)/2;
         if (lchk(p, dist)) {
             if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-                
                 if (chk[siz+1][p]==0) {
                     ans++;
                     flag=1;
@@ -140,12 +142,12 @@ long long update_sequence(int p, int v) {
         }
         if (flag) {
             mpropagate(p, siz+1);
+            lp(p-dist, siz, 0);
+            rp(p+dist, siz, 0);
             break;
         }
         siz++;
     }
-    // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
-    
     mpropagate(p+1, 0);
     mpropagate(p-1, 0);
     return ans;
