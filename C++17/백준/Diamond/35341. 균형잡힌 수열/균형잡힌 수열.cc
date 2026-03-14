@@ -37,7 +37,7 @@ void rp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; cnt++;}
+            if (chk[siz+1][p]==0) {ans++; cnt++; flag=1;}
             chk[siz+1][p] = V[p];
         }
         else {
@@ -46,7 +46,7 @@ void rp(int p, int siz, int cnt) {
         pq.push({-siz-1, p, 1, cnt});
     }
     if (cnt==0) return;
-    pq.push({-siz, p+dist, 1, 0});
+    if (!flag) pq.push({-siz, p+dist, 1, 0});
 }
 
 void lp(int p, int siz, int cnt) {
@@ -55,7 +55,7 @@ void lp(int p, int siz, int cnt) {
     bool flag=0;
     if (lchk(p, dist)) {
         if (chk[siz][p-dist]>0 && chk[siz][p+dist]>0 && max(chk[siz][p-dist],chk[siz][p+dist])<V[p]) {
-            if (chk[siz+1][p]==0) {ans++; cnt++;}
+            if (chk[siz+1][p]==0) {ans++; cnt++; flag=1;}
             chk[siz+1][p] = V[p];
         }
         else {
@@ -64,7 +64,7 @@ void lp(int p, int siz, int cnt) {
         pq.push({-siz-1, p, -1, cnt});
     }
     if (cnt==0) return;
-    pq.push({-siz, p-dist, -1, 0});
+    if (!flag) pq.push({-siz, p-dist, -1, 0});
 }
 void mpropagate(int p, int siz) {
     int t = pow(2, siz+1)-1;
