@@ -2,14 +2,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 using std::vector;
-int chk[21][100005]={}, ans;
+int chk[21][100005]={}, ans, nn, pp[21]={};
 // -크기, 위치, 함수명, (필요시) cnt
 // -1:lp, 0:mp, 1:rp
 deque<tuple<int,int,int,int>> pq;
 vector<int> V;
 long long initialize(int N, vector<int> A) {
+    pp[1]=2;
+    for (int i=2; i<=20; i++) pp[i]=pp[i-1]*2;
     for (int i=0; i<N; i++) V.push_back(A[i]);
     ans=N;
+    nn=N;
     for (int i=0; i<N; i++) {
         chk[0][i] = A[i];
     }
@@ -27,12 +30,12 @@ long long initialize(int N, vector<int> A) {
     return ans;
 }
 bool lchk(int p, int dist) {
-    if ((p-2*dist)<-1 || (p+2*dist)>V.size()+1) return false;
+    if ((p-2*dist)<-1 || (p+2*dist)>nn+1) return false;
     return true;
 }
 
 void rp(int p, int siz, int cnt) {
-    int t = pow(2, siz+1)-1;
+    int t = pp[siz+1]-1;
     int dist = (t+1)/2;
     bool flag=0;
     if (lchk(p, dist)) {
@@ -43,14 +46,14 @@ void rp(int p, int siz, int cnt) {
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++; flag=1;}
         }
-        pq.push_back({-siz-1, p, 1, cnt});
+        pq.push_back({siz+1, p, 1, cnt});
     }
     if (cnt==0) return;
-    if (!flag) pq.push_front({-siz, p+dist, 1, 0});
+    if (!flag) pq.push_front({siz, p+dist, 1, 0});
 }
 
 void lp(int p, int siz, int cnt) {
-    int t = pow(2, siz+1)-1;
+    int t = pp[siz+1]-1;
     int dist = (t+1)/2;
     bool flag=0;
     if (lchk(p, dist)) {
@@ -61,14 +64,14 @@ void lp(int p, int siz, int cnt) {
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0; cnt++; flag=1;}
         }
-        pq.push_back({-siz-1, p, -1, cnt});
+        pq.push_back({siz+1, p, -1, cnt});
     }
     if (cnt==0) return;
-    if (!flag) pq.push_front({-siz, p-dist, -1, 0});
+    if (!flag) pq.push_front({siz, p-dist, -1, 0});
 }
 
 void mpropagate(int p, int siz) {
-    int t = pow(2, siz+1)-1;
+    int t = pp[siz+1]-1;
     int dist = (t+1)/2;
     bool flag=0;
     if (lchk(p, dist)) {
@@ -84,25 +87,19 @@ void mpropagate(int p, int siz) {
         }
         // 중앙 결과가 달라지다가 같아짐
         if (flag) {
-            pq.push_front({-siz, p-dist, -1, 0});
-            pq.push_front({-siz, p+dist, 1, 0});
+            pq.push_front({siz, p-dist, -1, 0});
+            pq.push_front({siz, p+dist, 1, 0});
             return;
         }
-        pq.push_back({-(siz+1), p, 0, 0});
+        pq.push_back({(siz+1), p, 0, 0});
         return;
     }
     else {
-        pq.push_front({-siz, p-dist, -1, 0});
-        pq.push_front({-siz, p+dist, 1, 0});
+        pq.push_front({siz, p-dist, -1, 0});
+        pq.push_front({siz, p+dist, 1, 0});
     }
     
 }
-//chk[a][b] : 크기가 a, 중앙이 b인 산맥의 값(산맥 안되면 0)
-/*
-양옆전파도 가변적으로 진행
-중앙 산맥이 변할때와 안변할때로 나누기
-안변하면:일치하는 마지막 빙산에서 rp lp
-*/
 long long update_sequence(int p, int v) {
     V[p]=v;
     chk[0][p]=v;
@@ -128,21 +125,21 @@ long long update_sequence(int p, int v) {
                     flag=1;
                 }
                 else {
-                    pq.push_front({-siz, p-dist, -1, 0});
-                    pq.push_front({-siz, p+dist, 1, 0});
+                    pq.push_front({siz, p-dist, -1, 0});
+                    pq.push_front({siz, p+dist, 1, 0});
                     break;
                 }
             }
         }
         else {
-            pq.push_front({-siz, p-dist, -1, 0});
-            pq.push_front({-siz, p+dist, 1, 0});
+            pq.push_front({siz, p-dist, -1, 0});
+            pq.push_front({siz, p+dist, 1, 0});
             break;
         }
         if (flag) {
-            pq.push_back({-(siz+1), p, 0, 0});
-            pq.push_front({-siz, p-dist, -1, 0});
-            pq.push_front({-siz, p+dist, 1, 0});
+            pq.push_back({siz+1, p, 0, 0});
+            pq.push_front({siz, p-dist, -1, 0});
+            pq.push_front({siz, p+dist, 1, 0});
             break;
         }
         siz++;
@@ -152,7 +149,6 @@ long long update_sequence(int p, int v) {
     while (!pq.empty()) {
         auto [a, b, c, d] = pq.front();
         pq.pop_front();
-        a *= -1;
         if (c==0) mpropagate(b, a);
         if (c==-1) lp(b, a, d);
         if (c==1) rp(b, a, d); 
