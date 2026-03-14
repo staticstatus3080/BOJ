@@ -45,11 +45,19 @@ void rp(int p, int siz, int cnt) {
             else if (cnt>0){
                 rp(p+dist, siz, 0);
             }
+            else {
+                rp(p, siz+1, cnt);
+                return;
+            }
         }
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0;}
             else if (cnt>0){
                 rp(p+dist, siz, 0);
+            }
+            else {
+                rp(p, siz+1, cnt);
+                return;
             }
         }
         rp(p, siz+1, cnt+1);
@@ -68,11 +76,19 @@ void lp(int p, int siz, int cnt) {
             else if (cnt>0){
                 lp(p-dist, siz, 0);
             }
+            else {
+                lp(p, siz+1, cnt);
+                return;
+            }
         }
         else {
             if (chk[siz+1][p]!=0) {ans--; chk[siz+1][p]=0;}
             else if(cnt>0){
                 lp(p-dist, siz, 0);
+            }
+            else {
+                lp(p, siz+1, cnt);
+                return;
             }
         }
         lp(p, siz+1, cnt+1);
@@ -157,7 +173,7 @@ long long update_sequence(int p, int v) {
         siz++;
     }
     // 중앙에 산맥이 생김과 동시에 다른쪽에서 끊어질 수 있음
-   
+    
     mpropagate(p+1, 0);
     mpropagate(p-1, 0);
     return ans;
